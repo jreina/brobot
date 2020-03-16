@@ -48,7 +48,7 @@ module.exports = botId =>
           // https://stackoverflow.com/questions/17843691/javascript-regex-to-match-a-regex
           // Be afraid!
           const regexForRegex = /\/((?![*+?])(?:[^\r\n\[/\\]|\\.|\[(?:[^\r\n\]\\]|\\.)*\])+)\/((?:g(?:im?|mi?)?|i(?:gm?|mg?)?|m(?:gi?|ig?)?)?)/;
-          if (!text.match(regexForRegex)) {
+          if (!regexForRegex.test(text)) {
             return message.channel.send(`Pattern ${text} isn't a valid regex!`);
           }
           await terms.insert({ pattern: text, label });
