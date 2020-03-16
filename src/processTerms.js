@@ -11,6 +11,7 @@ async function incrementScoreForUser(term, user, guildId) {
       }
     });
   } else {
+    if (!(user in termScore.scores)) termScore.scores[user] = 0;
     termScore.scores[user]++;
     await coll.update(termScore);
   }
