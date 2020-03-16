@@ -44,9 +44,16 @@ module.exports = botId =>
             return message.channel.send(
               "Must provide a label when registering a pattern! Send `@brobot help` for full usage instructions."
             );
+
+          // https://stackoverflow.com/questions/17843691/javascript-regex-to-match-a-regex
+          // Be afraid!
+          const regexForRegex = /\/((?![*+?])(?:[^\r\n\[/\\]|\\.|\[(?:[^\r\n\]\\]|\\.)*\])+)\/((?:g(?:im?|mi?)?|i(?:gm?|mg?)?|m(?:gi?|ig?)?)?)/;
+          if (!regexForRegex.test(text)) {
+            return message.channel.send(`Pattern ${text} isn't a valid regex!`);
+          }
           await terms.insert({ pattern: text, label });
           return message.channel.send(
-            `Pattern \`/${text}/\` has been registered with brobot as "${label}"`
+            `Pattern ${text} has been registered with brobot as "${label}"`
           );
           break;
         case "listterms":
@@ -79,9 +86,7 @@ module.exports = botId =>
           break;
         case "dropterm":
           if (!text) {
-            return message.channel.send(
-              "Please provide a term to drop!"
-            );
+            return message.channel.send("Please provide a term to drop!");
           }
           await terms.delete(item => item.term === text || item.label === text);
           return message.channel.send(`Dropped term labeled ${text}`);
