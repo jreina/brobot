@@ -33,11 +33,8 @@ async function buildScoreboard(name, guildId) {
 
 function getAsRegex(text) {
   const getRegexString = text => {
-    return text.split("/").reduce((pattern, segment, index, segments) => {
-      if (index === 1) return segment;
-      const isPatternSegment = index !== 0 && index !== segments.length - 1;
-      return isPatternSegment ? `${pattern}/${segment}` : pattern;
-    }, "");
+    const bits = text.split("/");
+    return bits.slice(1, bits.length - 1).join("/")
   };
   const regexString = getRegexString(text);
 
