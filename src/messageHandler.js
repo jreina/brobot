@@ -77,6 +77,15 @@ module.exports = botId =>
           await coll.delete(item => item.name === text);
           return message.channel.send(`Data purged for term labeled ${text}`);
           break;
+        case "dropterm":
+          if (!text) {
+            return message.channel.send(
+              "Please provide a term to drop!"
+            );
+          }
+          await terms.delete(item => item.term === text || item.label === text);
+          return message.channel.send(`Dropped term labeled ${text}`);
+          break;
       }
     }
 
