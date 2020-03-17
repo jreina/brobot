@@ -1,8 +1,9 @@
 const Redis = require("ioredis");
+const auth = require('../auth')
 
 class TermRA {
   constructor() {
-    this.redis = new Redis();
+    this.redis = new Redis(auth.redis.host);
   }
   async getTerms(guildId) {
     const key = `guild=${guildId}:terms`;
