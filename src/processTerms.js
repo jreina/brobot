@@ -1,30 +1,13 @@
-const { Database } = require("@johnny.reina/json-db");
-
-async function incrementScoreForUser(term, user, guildId) {
-  const coll = new Database("brobot").collection(`scores.${guildId}`);
-  const termScore = await coll.find(item => item.name === term);
-  if (!termScore) {
-    await coll.insert({
-      name: term,
-      scores: {
-        [user]: 1
-      }
-    });
-  } else {
-    if (!(user in termScore.scores)) termScore.scores[user] = 0;
-    termScore.scores[user]++;
-    await coll.update(termScore);
-  }
-}
+const ScoreRA = require("./data/ScoreRA");
+const TermRA = require("./data/TermRA");
 
 async function buildScoreboard(name, guildId) {
-  const coll = new Database("brobot").collection(`scores.${guildId}`);
-  const termScore = await coll.find(item => item.name === name);
+  const termScore = await ScoreRA.getScoresForTerm(name, guildId);
   if (!termScore) {
     return `No score data for ${name}`;
   } else {
-    const scores = Object.entries(termScore.scores)
-      .sort(([, a], [, b]) => (a > b ? -1 : a < b ? 1 : 0))
+    const scores = Object.entries(termScore)
+      .sort(([, a], [, b]) => (+a > +b ? -1 : +a < +b ? 1 : 0))
       .map(([user, score]) => `${user}\t\t->\t${score}`)
       .join("\n");
 
@@ -54,8 +37,7 @@ function getAsRegex(text) {
  * @param {string} guildId
  */
 module.exports = async function processTerms(user, text, guildId, cb) {
-  const coll = new Database("brobot").collection(`terms.${guildId}`);
-  const terms = await coll.read();
+  const terms = await TermRA.getTerms(guildId);
   const matchedTerms = terms
     .filter(term =>
       term.term ? text.includes(term.term) : getAsRegex(term.pattern).test(text)
@@ -63,7 +45,7 @@ module.exports = async function processTerms(user, text, guildId, cb) {
     .map(term => (term.term ? term.term : term.label));
 
   for (const term of matchedTerms) {
-    await incrementScoreForUser(term, user, guildId);
+    await ScoreRA.incrementScoreForUser(term, user, guildId);
     cb(await buildScoreboard(term, guildId));
   }
 };

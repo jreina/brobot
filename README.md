@@ -15,6 +15,10 @@ _adds a plain-text term to the watch list_
 
 _adds a RegEx pattern to the watch list with the given label_
 
+### `!dropterm <term|label>`
+
+_stop watching for a term or pattern label_
+
 ### `!listterms`
 
 _lists out all the terms and patterns being watched_
