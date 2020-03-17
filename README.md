@@ -1,5 +1,7 @@
-#brobot
-A REDOS-susceptible Discord bot.
+# brobot
+
+_create your own hell_  
+Register terms and regular expressions to track instances of. Brobot will then show a scoreboard when the term or regex is detected in a message.
 
 ## Commands:
 
